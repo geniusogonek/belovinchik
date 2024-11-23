@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.greeting-container {
+    max-width: 500px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: white;
+    text-align: center;
+}
+.username {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 10px;
+}
+.welcome-message {
+    font-size: 24px;
+    color: #666;
+}

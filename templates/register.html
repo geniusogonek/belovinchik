@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        form {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            width: 320px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: red;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form id="register-form">
+        <h2>Регистрация</h2>
+        <label for="fullname">Имя</label>
+        <input type="text" id="fullname" placeholder="Введите полное имя" required>
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Введите email" required>
+        <label for="password">Пароль</label>
+        <input type="password" id="password" placeholder="Введите пароль" required>
+        <span class="error-message">Ошибка регистрации.</span>
+        <input type="submit" value="Зарегистрироваться">
+        <p>Уже есть аккаунт? <a href="login">Войти</a></p>
+    </form>
+    <script>
+        document.getElementById('register-form').onsubmit = function(event) {
+            event.preventDefault();
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Здесь можно добавить проверку на валидность email и пароля
+            if (!isValidEmail(email)) {
+                showErrorMessage('Некорректный email.');
+                return;
+            }
+            if (password.length < 6) {
+                showErrorMessage('Пароль должен содержать минимум 6 символов.');
+                return;
+            }
+
+            // Отправка данных на сервер
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ fullname, email, password })
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    showErrorMessage('Ошибка регистрации.');
+                }
+            });
+        };
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showErrorMessage(message) {
+            const errorMessage = document.querySelector('.error-message');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
