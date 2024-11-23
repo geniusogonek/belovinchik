@@ -9,8 +9,15 @@ from fastapi.staticfiles import StaticFiles
 from database import Database
 from pydantic import BaseModel
 
+from jwt_utils import decode_jwt, generate_jwt
 
-class Auth(BaseModel):
+
+class LoginData(BaseModel):
+    email: str
+    password: str
+
+
+class RegisterData(BaseModel):
     email: str
     password: str
 
@@ -21,19 +28,44 @@ templates = Jinja2Templates(directory="templates")
 db = Database()
 
 
+@app.get("/home", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse(request, "home.html")
+
+
 @app.get("/login", response_class=HTMLResponse)
 async def login_html(request: Request):
     return templates.TemplateResponse(request, "login.html")
 
 
 @app.post("/login")
-async def login(auth: Auth):
-    print(auth.email, auth.password)
+async def login(login_data: LoginData):
+    if db.log_user(login_data):
+        return generate_jwt(login_data.email, login_data.password)
+    return False
 
 
 @app.get("/register", response_class=HTMLResponse)
-async def register(request: Request):
+async def register_html(request: Request):
     return templates.TemplateResponse(request, "register.html")
+
+
+@app.post("/register")
+async def register(register_data: RegisterData):
+    if db.reg_user(register_data):
+        return generate_jwt(register_data.email, register_data.password)
+    return False
+
+
+@app.get("/check")
+async def check(request: Request):
+    return HTMLResponse(f"<h1>{'YES' if validate(request.cookies) else 'NO'}</h1>")
+
+
+def validate(cookies):
+    data = decode_jwt(cookies.get("Authorization"))
+    email, password = data["email"], data["password"]
+    return db.log_user(LoginData(email=email, password=password))
 
 
 async def main():

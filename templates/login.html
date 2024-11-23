@@ -91,7 +91,9 @@
                 body: JSON.stringify({ email, password })
             }).then(response => {
                 if (response.ok) {
-                    window.location.href = '/dashboard';
+                    alert(response.json().Authorization)
+                    document.cookie = "Authorization=123";
+                    window.location.href = '/home';
                 } else {
                     showErrorMessage('Неверный email или пароль.');
                 }
