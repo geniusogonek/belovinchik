@@ -26,6 +26,4 @@ class Database:
     def log_user(self, data):
         cursor = self.connection.cursor()
         cursor.execute(f"SELECT hash_password FROM users WHERE email = '{data.email}'")
-        if checkpw(data.password.encode("utf-8"), cursor.fetchone()[0].encode("utf-8")):
-            return True
-        return False
+        return checkpw(data.password.encode("utf-8"), cursor.fetchone()[0].encode("utf-8"))
