@@ -91,8 +91,8 @@
                 body: JSON.stringify({ email, password })
             }).then(response => {
                 if (response.ok) {
-                    alert(response.json().Authorization)
-                    document.cookie = "Authorization=123";
+                    const { jwt } = response.json()
+                    document.cookie = "Authorization=" + jwt
                     window.location.href = '/home';
                 } else {
                     showErrorMessage('Неверный email или пароль.');
