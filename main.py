@@ -2,10 +2,11 @@ import uvicorn
 import asyncio
 
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi import status
 
 from models import LoginData, RegisterData
 from database import Database
@@ -28,11 +29,13 @@ async def login_html(request: Request):
     return templates.TemplateResponse(request, "login.html")
 
 
-@app.post("/login", response_class=JSONResponse)
+@app.post("/login", response_class=RedirectResponse)
 async def login(login_data: LoginData):
     if db.log_user(login_data):
-        jwt = {"jwt": generate_jwt(login_data.email, login_data.password)}
-        return JSONResponse(jwt)
+        jwt = generate_jwt(login_data.email, login_data.password)
+        response = RedirectResponse("/home", status_code=status.HTTP_200_OK)
+        response.set_cookie("Authorization", jwt)
+        return response
     return False
 
 
@@ -54,7 +57,6 @@ async def check(request: Request):
 
 
 def validate(cookies):
-    print(cookies)
     data = decode_jwt(cookies.get("Authorization"))
     if data:
         email, password = data["email"], data["password"]
