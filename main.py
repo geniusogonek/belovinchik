@@ -21,8 +21,12 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/home", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse(request, "home.html")
-
+    decoded = decode_jwt(request.cookies.get("Authorization"))
+    if decoded:
+        response = templates.TemplateResponse(request, "create_survey.html", {"username": decoded.get("email")})
+        response.delete_cookie("Authorization")
+        return response
+    return templates.TemplateResponse(request, "logreg.html")
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_html(request: Request):

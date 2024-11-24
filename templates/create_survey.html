@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анкета</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        form {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 11, 0.15);
+            width: 600px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="file"] {
+            width: 80%;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: red;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .error-message.show-error {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <form id="survey-form">
+        <h2>Анкета</h2>
+        <label for="age">Возраст (от 11 до 100 лет)</label>
+        <select id="age" name="age">
+            <option value="">-- Возраст (от 11 до 100 лет) --</option>
+            {% for age in range(11, 101) %}
+            <option value="{{ age }}">{{ age }}</option>
+            {% endfor %}
+        </select>
+        <label for="college_course">Курс колледжа (1-4)</label>
+        <select id="college_course" name="college_course">
+            <option value="">-- Курс колледжа (1-4) --</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        <label for="number">Число в комбобоксе (1-4)</label>
+        <select id="number" name="number">
+            <option value="">-- Число (1-4) --</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        <label for="first_name">Имя</label>
+        <input type="text" id="first_name" placeholder="Введите имя" required>
+        <label for="gender">Пол</label>
+        <select id="gender" name="gender">
+            <option value="">-- Выберите пол --</option>
+            <option value="male">Мужчина</option>
+            <option value="female">Женщина</option>
+        </select>
+        <label for="description">Описание</label>
+        <textarea id="description" placeholder="Введите описание" rows="5" required></textarea>
+        <label for="photos">Фотографии</label>
+        <input type="file" id="photo_1" name="photo_1" onchange="checkFile(this); return false;" multiple>
+        <label for="photos" class="mt-0 mb-20">Фотография 1</label>
+        <br>
+        <input type="file" id="photo_2" name="photo_2" onchange="checkFile(this); return false;" multiple>
+        <label for="photos" class="mt-0 mb-20">Фотография 2</label>
+        <br>
+        <input type="file" id="photo_3" onchange="checkFile(this); return false;" multiple>
+        <label for="photos" class="mt-0 mb-20">Фотография 3</label>
+        <br>
+        <input type="submit" value="Отправить анкету">
+        <span class="error-message" id="email_error_message">E-mail уже передан</span>
+        <span class="error-message" id="age_error_message">Возраст должен быть от 11 до 100 лет</span>
+        <span class="error-message" id="course_error_message">Необходимо выбрать курс колледжа (1-4)</span>
+        <span class="error-message" id="number_error_message">Необходимо выбрать число (1-4)</span>
+        <span class="error-message" id="first_name_error_message">Имя обязательно</span>
+        <span class="error-message" id="gender_error_message">Пол обязателен</span>
+        <span class="error-message" id="description_error_message">Описание обязательно</span>
+        <span class="error-message" id="photos_error_message">Нужно загрузить хотя бы одну фотографию</span>
+    </form>
+    <script>
+        document.getElementById('survey_form').onsubmit = function(event) {
+            event.preventDefault();
+            const first_name = document.getElementById('first_name').value;
+            const gender = document.getElementById('gender').value;
+            const description = document.getElementById('description').value;
+            const photo_1 = document.getElementById('photo_1').files[0];
+            const photo_2 = document.getElementById('photo_2').files[0];
+            const photo_3 = document.getElementById('photo_3').files[0];
+            const age = parseInt(document.getElementById('age').value);
+            const college_course = parseInt(document.getElementById('college_course').value);
+            const number = parseInt(document.getElementById('number').value);
+            const email = '{{ request.form['email'] }}'.
+
+            if (age < 11 || age > 100) {
+                document.getElementById('age_error_message').classList.add('show-error-message');
+            } else {
+                document.getElementById('age_error_message').classList.remove('show-error-message');
+            }
+
+            if (college_course === '') {
+                document.getElementById('course_error_message').classList.add('show-error-message');
+            } else {
+                document.getElementById('course_error_message').classList.remove('show-error-message');
+            }
+
+            if (number === '') {
+                document.getElementById('number_error_message').classList.add('show-error-message');
+            } else {
+                document.getElementById('number_error_message').classList.remove('show-error-message');
+            }
+
+            if (first_name === '') {
+                document.getElementById('first_name_error_message').classList.add('show-error-message');
+            } else {
+                document.getElementById('first_name_error_message').classList.remove('show-error-message');
+            }
+
+            if (gender === '') {
+                document.getElementById('gender_error_message').classList.add('show-error-message');
+            } else {
+                document.getElementById('gender_error_message').classList.remove('show-error-message');
+            }
+
+            if (description === '') {
+                document.getElementById('description_error_message').classList.add('show-error-message');
+            } else {
+                document.getElementById('description_error_message').classList.remove('show-error-message');
+            }
+
+            if (document.querySelector('#photos').children.length === 0) {
+                document.getElementById('photos_error_message').classList.add('show-error-message');
+            } else {
+                document.getElementById('photos_error_message').classList.remove('show-error-message');
+            }
+
+            if (email === '') {
+                document.getElementById('email_error_message').classList.add('show-error-message');
+            } else {
+                document.getElementById('email_error_message').classList.remove('show-error-message');
+            }
+
+            if (age >= 11 && age <= 100 && college_course !== '' && number !== '' && first_name !== '' && gender !== '' && description !== '' && document.querySelector('#photos').children.length > 0) {
+                const json_data = {
+                    'first_name': first_name,
+                    'gender': gender,
+                    'description': description,
+                    'age': age,
+                    'college_course': college_course,
+                    'number': number,
+                    'photos': [photo_1, photo_2, photo_3],
+                    'email': email,
+                };
+
+                fetch('/create_survey', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(json_data),
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = '/thanks_for_participation';
+                    } else {
+                        alert('Что-то пошло не так. Попробуйте снова.');
+                    }
+                };
+            }
+
+            function checkFile(file_input) {
+                if (file_input.files[0].size === 0) {
+                    file_input.classList.add('error-file-upload');
+                    file_input.nextSibling.nextElement.parentNode.firstChild.style.color = 'red';
+                    return true;
+                }
+
+                file_input.classList.remove('error-file-upload');
+                file_input.nextSibling.nextElement.parentNode.firstChild.style.color = '';
+                return false;
+            }
+
+            function showErrorMessage(error_message) {
+                document.getElementById('survey_form').classList.add('form-errors');
+                error_message.classList.add('show-error-message');
+            }
+
+            function hideErrorMessages() {
+                document.getElementById('survey_form').classList.remove('form-errors');
+                const error_messages = document.querySelectorAll('.error-message');
+                error_messages.forEach(function (error_message) {
+                    error_message.classList.remove('show-error-message');
+                });
+            }
+
+            function clearErrors() {
+                document.getElementById('survey_form').classList.remove('form-errors');
+                const error_messages = document.querySelectorAll('.error-message');
+                error_messages.forEach(function (error_message) {
+                    error_message.classList.remove('show-error-message');
+                });
+            }
+
+            function handleSubmit(event) {
+                event.preventDefault();
+                const form_data = new FormData(form);
+                if (form_data.get('email')) {
+                    const existing_email = form_data.get('existing_email');
+                    if (existing_email) {
+                        showErrorMessage('E-mail уже передан');
+                        return;
+                    }
+                }
+
+                fetch('/create_survey', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(form_data),
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = '/thanks_for_participation';
+                    } else {
+                        alert('Что-то пошло не так. Попробуйте снова.');
+                    }
+                };
+            }
+
+            return false;
+        }
+    </body>
+    <script>
+        document.getElementById('survey_form').addEventListener('submit', handleSubmit);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('keyup', clearErrors);
+        document.getElementById('survey_form').addEventListener('focusin', hideErrorMessages);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('mouseleave', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('blur', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('change', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('input', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('paste', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('reset', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('cut', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('mousedown', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('dragend', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('drop', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('textedit', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('copy', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('keypress', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('click', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('doubleclick', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('комбинатор', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('keydown', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('mousemove', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('keyup', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('focusout', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('mouseover', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('focusin', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('mouseleave', clearErrors);
+    </script>
+    <script>
+        document.getElementById('survey_form').addEventListener('focusin', clearErrors);
+    </script>
